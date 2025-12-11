@@ -3,7 +3,6 @@ package com.poultry.farm.service;
 import com.poultry.farm.dto.AdminDeliveryRequest;
 import com.poultry.farm.dto.AdminStatusUpdateRequest;
 import com.poultry.farm.dto.DriverInVendorOrdWrapper;
-import com.poultry.farm.dto.VendorOrderRequest;
 import com.poultry.farm.entity.Batch;
 import com.poultry.farm.entity.Order;
 import com.poultry.farm.entity.OrderStatus;
