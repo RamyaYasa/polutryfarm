@@ -2,6 +2,7 @@ package com.poultry.farm.service;
 
 import com.poultry.farm.dto.AdminDeliveryRequest;
 import com.poultry.farm.dto.AdminStatusUpdateRequest;
+import com.poultry.farm.dto.DriverInVendorOrdWrapper;
 import com.poultry.farm.dto.VendorOrderRequest;
 import com.poultry.farm.entity.Batch;
 import com.poultry.farm.entity.Order;
@@ -32,21 +33,21 @@ public class OrderService {
     private BatchRepository batchRepository;
 
     // Vendor places order
-    public Order placeVendorOrder(VendorOrderRequest request) {
+    public Order placeVendorOrder(DriverInVendorOrdWrapper request) {
         // Validate batch
-        Batch batch = batchRepository.findById(request.getBatchId())
-                .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + request.getBatchId()));
+        Batch batch = batchRepository.findById(request.getVendorOrderRequest().getBatchId())
+                .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + request.getVendorOrderRequest().getBatchId()));
 
         // Check availability
-        if (batch.getAvailableHens() < request.getQuantity()) {
+        if (batch.getAvailableHens() < request.getVendorOrderRequest().getQuantity()) {
             throw new InsufficientStockException(
-                    "Requested quantity: " + request.getQuantity() +
+                    "Requested quantity: " + request.getVendorOrderRequest().getQuantity() +
                             ", Available: " + batch.getAvailableHens()
             );
         }
 
         // Update batch availability
-        batch.setAvailableHens(batch.getAvailableHens() - request.getQuantity());
+        batch.setAvailableHens(batch.getAvailableHens() - request.getVendorOrderRequest().getQuantity());
         batchRepository.save(batch);
 
         // Create and save order
@@ -55,11 +56,14 @@ public class OrderService {
         order.setBatchId(batch.getId());
         order.setBatchCode(batch.getBatchCode());
         order.setBreed(batch.getBreed()); // Store breed info
-        order.setQuantity(request.getQuantity());
-        order.setVendorName(request.getVendorName());
-        order.setPhoneNumber(request.getPhoneNumber());
-        order.setShopName(request.getShopName());
-        order.setDeliveryDate(request.getDeliveryDate());
+        order.setQuantity(request.getVendorOrderRequest().getQuantity());
+        order.setVendorName(request.getVendorOrderRequest().getVendorName());
+        order.setPhoneNumber(request.getVendorOrderRequest().getPhoneNumber());
+        order.setShopName(request.getVendorOrderRequest().getShopName());
+        order.setDeliveryDate(request.getVendorOrderRequest().getDeliveryDate());
+        order.setDriverName(request.getDriverInfoRequestdto().getDriverName());
+        order.setDriverPhone(request.getDriverInfoRequestdto().getDriverNo());
+        order.setVehicleNumber(request.getDriverInfoRequestdto().getVehicleNumber());
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
 

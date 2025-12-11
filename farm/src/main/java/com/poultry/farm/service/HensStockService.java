@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.poultry.farm.dto.HensStockRequestdto;
-import com.poultry.farm.entity.HenStock;
-import com.poultry.farm.repo.HensStockRepo;
+import com.poultry.farm.entity.Batch;
+import com.poultry.farm.repository.BatchRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,49 +17,50 @@ import lombok.extern.slf4j.Slf4j;
 public class HensStockService {
 	
 	@Autowired
-	private HensStockRepo hensStockRepo;
+	private BatchRepository batchRepository;
 
-	public HenStock addStock(HensStockRequestdto hensStockRequestdto) {
+	public Batch addStock(HensStockRequestdto hensStockRequestdto) {
 		
-		HenStock henStock = new HenStock();
+		Batch hensBatch = new Batch();
 		
-		henStock.setTotalHens(hensStockRequestdto.getHens());
-		henStock.setHensLeft(hensStockRequestdto.getHens());
-		henStock.setBreed(hensStockRequestdto.getBreed());
-		henStock.setDate(LocalDate.now());
-		henStock.setBatchCode(hensStockRequestdto.getBatchCode());
+		hensBatch.setTotalHens(hensStockRequestdto.getHens());
+		hensBatch.setAvailableHens(hensStockRequestdto.getHens());
+		hensBatch.setBreed(hensStockRequestdto.getBreed());
+		hensBatch.setDateCreated(LocalDate.now());
+		hensBatch.setBatchCode(hensStockRequestdto.getBatchCode());
 		
 		log.info("Stock updated Succesfully");
-		return hensStockRepo.save(henStock);
+		return batchRepository.save(hensBatch);
 	}
 
-	public List<HenStock> getStock() {
-		return hensStockRepo.findAll();
+	public List<Batch> getStock() {
+		return batchRepository.findAll();
 	}
 	
-	public void reduceHensLeft(Long stockId, int hensGiven) {
-	    HenStock stock = hensStockRepo.findById(stockId)
-	        .orElseThrow(() -> new RuntimeException("Stock not found"));
+//	public void reduceHensLeft(Long stockId, int hensGiven) {
+//		
+//	    Batch stock = batchRepository.findById(stockId)
+//	        .orElseThrow(() -> new RuntimeException("Stock not found"));
+//
+//	    if(stock.getAvailableHens() < hensGiven) {
+//	        throw new RuntimeException("Not enough hens in stock");
+//	    }
+//
+//	    stock.setAvailableHens(stock.getAvailableHens() - hensGiven);
+//
+//	    batchRepository.save(stock);
+//	}
 
-	    if(stock.getHensLeft() < hensGiven) {
-	        throw new RuntimeException("Not enough hens in stock");
-	    }
+	public Batch updateStock(Long id, Integer hens, String breed, String batchCode) {
 
-	    stock.setHensLeft(stock.getHensLeft() - hensGiven);
-
-	    hensStockRepo.save(stock);
-	}
-
-	public HenStock updateStock(Long id, Integer hens, String breed, String batchCode) {
-
-	    HenStock henStock = hensStockRepo.findById(id)
+	    Batch henStock = batchRepository.findById(id)
 	            .orElseThrow(() -> new RuntimeException("Stock Not Found with id: " + id));
 
 	    if (hens != null) {
 	        henStock.setTotalHens(hens);
+	        henStock.setAvailableHens(hens);
 	    }
 
-	    log.info(breed);
 	    if (breed != null && !breed.isEmpty()) {
 	        henStock.setBreed(breed);
 	    }
@@ -68,7 +69,7 @@ public class HensStockService {
 	        henStock.setBatchCode(batchCode);
 	    }
 
-	    return hensStockRepo.save(henStock);
+	    return batchRepository.save(henStock);
 	}
 
 

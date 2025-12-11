@@ -2,6 +2,7 @@ package com.poultry.farm.controller;
 
 import com.poultry.farm.dto.AdminDeliveryRequest;
 import com.poultry.farm.dto.AdminStatusUpdateRequest;
+import com.poultry.farm.dto.DriverInVendorOrdWrapper;
 import com.poultry.farm.dto.VendorOrderRequest;
 import com.poultry.farm.entity.Batch;
 import com.poultry.farm.entity.Order;
@@ -35,7 +36,7 @@ public class OrderController {
 
     // POST: Vendor places order (creates PENDING order)
     @PostMapping("/vendor/place-order")
-    public ResponseEntity<Order> placeVendorOrder(@RequestBody VendorOrderRequest request) {
+    public ResponseEntity<Order> placeVendorOrder(@RequestBody DriverInVendorOrdWrapper request) {
         Order order = orderService.placeVendorOrder(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }

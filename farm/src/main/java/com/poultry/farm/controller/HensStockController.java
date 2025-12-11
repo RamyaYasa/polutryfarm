@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poultry.farm.dto.HensStockRequestdto;
-import com.poultry.farm.entity.HenStock;
+import com.poultry.farm.entity.Batch;
 import com.poultry.farm.service.HensStockService;
 
 @RestController
@@ -23,20 +23,20 @@ public class HensStockController {
 	private HensStockService hensStockService;
 	
 	@PostMapping("/addStock")
-	public HenStock addStock(@RequestBody HensStockRequestdto hensStockRequestdto) {
+	public Batch addStock(@RequestBody HensStockRequestdto hensStockRequestdto) {
 		
 		return hensStockService.addStock(hensStockRequestdto);
 	}
 	
 	
 	@GetMapping("/getStock")
-	public List<HenStock> getStock() {
+	public List<Batch> getStock() {
 		
 		return hensStockService.getStock();
 	}
 	
 	@PutMapping("/updateStock")
-	public HenStock updateStock(
+	public Batch updateStock(
 	        @RequestParam Long id,
 	        @RequestParam(required = false) Integer hens,
 	        @RequestParam(required = false) String breed,
